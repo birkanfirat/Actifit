@@ -7,10 +7,13 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.actifit.R
+import com.example.actifit.data.local.songItem
 import com.example.actifit.data.remote.model.SongModel
+import com.example.actifit.helpers.listener.SelectListener
 import kotlinx.android.synthetic.main.row_song.view.*
 
-class SongsAdapter (val context: Context, var songList: ArrayList<SongModel>) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class SongsAdapter(val context: Context, var songList: ArrayList<SongModel>,var listener : SelectListener<SongModel>) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): RecyclerView.ViewHolder {
 
@@ -28,19 +31,18 @@ class SongsAdapter (val context: Context, var songList: ArrayList<SongModel>) : 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
 
         val itemRow = songList[position]
-        if(itemRow!=null){
-
+        if (itemRow != null) {
             Glide.with(context).load(itemRow.artworkUrl100).centerCrop()
                 .into(holder.itemView.imgSong)
             holder.itemView.tvSongName.text = itemRow.trackName
-          //  holder.itemView.tvSongDetail.text = itemRow.artistName
 
-
+            holder.itemView.setOnClickListener {
+                listener.onItemClicked(itemRow)
+            }
         }
 
 
-
-
     }
+
     class songsAdapterHolder(itemView: View) : RecyclerView.ViewHolder(itemView)
 }

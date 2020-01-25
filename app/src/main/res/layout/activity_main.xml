@@ -73,7 +73,7 @@
                 android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/searchText"
+                    android:id="@+id/edtxtSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="13dp"
@@ -89,7 +89,7 @@
                 <ImageButton
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_toEndOf="@+id/searchText">
+                    android:layout_toEndOf="@+id/edtxtSearch">
 
                 </ImageButton>
 
