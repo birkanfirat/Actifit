@@ -18,11 +18,11 @@ class SongsActivityViewModel(activity: Activity) : ViewModel() {
     var _resultSearch = MutableLiveData<ResultModel>()
     var resultSearch: LiveData<ResultModel> = _resultSearch
 
-    fun callSong(searchText: String) {
+    fun callSong(searchText: String, searchType: String) {
 
         var apiInterface = ApiClient.getClient().create(ActifitApi::class.java)
 
-        val getSong = apiInterface.getAll(searchText, "musicVideo", 100)
+        val getSong = apiInterface.getAll(searchText, searchType, 100)
         getSong.request()
         getSong.enqueue(object : Callback<ResultModel> {
 
@@ -39,8 +39,8 @@ class SongsActivityViewModel(activity: Activity) : ViewModel() {
 
                 if (response != null) {
 
-                    if (response.isSuccessful ) {
-                       _resultSearch.value = response.body()
+                    if (response.isSuccessful) {
+                        _resultSearch.value = response.body()
                     } else {
 
                     }

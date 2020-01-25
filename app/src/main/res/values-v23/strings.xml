@@ -1,7 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Actifit</string>
     <string name="selectCategory">Kategori Seçiniz</string>
     <string name="music">MÜZİKLER</string>
-    <string name="searchTextHint">Film, Müzik veya Podcast</string>
     <string name="appName">Actifit</string>
 </resources>

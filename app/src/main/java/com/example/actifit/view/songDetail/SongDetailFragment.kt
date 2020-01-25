@@ -12,11 +12,13 @@ import android.view.ViewGroup
 import com.bumptech.glide.Glide
 
 import com.example.actifit.R
+import com.example.actifit.base.BaseFragment
 import com.example.actifit.data.local.songItem
-import kotlinx.android.synthetic.main.row_song.view.*
+import com.example.actifit.view.song.SongActivity
+import kotlinx.android.synthetic.main.song_activity.*
 import kotlinx.android.synthetic.main.song_detail_fragment.*
 
-class SongDetailFragment : Fragment() {
+class SongDetailFragment : BaseFragment() {
 
     companion object {
         fun newInstance() = SongDetailFragment()
@@ -34,15 +36,19 @@ class SongDetailFragment : Fragment() {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
         viewModel = ViewModelProviders.of(this).get(SongDetailViewModel::class.java)
-
         init()
-
     }
 
     fun init() {
+
+        val activity = getBaseActivity() as SongActivity
+        activity.imgBack.visibility = View.VISIBLE
+        activity.imgSelectType.visibility = View.INVISIBLE
+        activity.imgDeleteIcon.visibility = View.VISIBLE
+
         if (songItem != null) {
             var songItem = songItem!!
-            var pictureUrl = songItem.artworkUrl100.replace("100x100bb.jpg","576x320.jpg")
+            var pictureUrl = songItem.artworkUrl100.replace("100x100bb.jpg", "280x420.jpg")
             Glide.with(this).load(pictureUrl).centerCrop()
                 .into(imgSong)
             txtSongName.text = songItem.trackName
@@ -61,6 +67,16 @@ class SongDetailFragment : Fragment() {
             } catch (e: ActivityNotFoundException) {
             }
         }
+    }
+
+    override fun onPause() {
+        super.onPause()
+        val activity = getBaseActivity() as SongActivity
+        activity.imgBack.visibility = View.INVISIBLE
+        activity.imgDeleteIcon.visibility = View.INVISIBLE
+        activity.imgSelectType.visibility = View.VISIBLE
+
+
     }
 
 }

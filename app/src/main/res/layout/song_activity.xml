@@ -19,42 +19,56 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
-            android:id="@+id/img_back"
+            android:id="@+id/imgBack"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:padding="16dp"
             android:adjustViewBounds="true"
+            android:padding="@dimen/padding12"
             android:scaleType="center"
+            android:visibility="invisible"
             android:src="@drawable/icn_back" />
 
         <TextView
-            android:id="@+id/tv_title"
+            android:id="@+id/tvTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
-            android:layout_toLeftOf="@+id/img_hamburger"
-            android:layout_toRightOf="@+id/img_back"
+            android:layout_toLeftOf="@+id/imgSelectType"
+            android:layout_toRightOf="@+id/imgBack"
             android:ellipsize="end"
             android:gravity="center"
             android:lines="1"
-            android:text="MÜZİKLER"
+            android:text="@string/appName"
             android:textColor="@color/white"
-            android:textSize="16sp" />
+            android:textSize="@dimen/font5" />
 
         <ImageView
-            android:id="@+id/img_hamburger"
+            android:id="@+id/imgSelectType"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
-            android:adjustViewBounds="false"
+            android:adjustViewBounds="true"
+            android:padding="@dimen/padding12"
             android:scaleType="center"
-            android:padding="16dp"
             android:src="@drawable/icn_filter" />
+
+        <ImageView
+            android:id="@+id/imgDeleteIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toLeftOf="@+id/imgSelectType"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:adjustViewBounds="true"
+            android:padding="@dimen/padding12"
+            android:scaleType="center"
+            android:visibility="gone"
+            android:src="@drawable/icn_delete" />
     </RelativeLayout>
 
-     <FrameLayout
+    <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
@@ -76,15 +90,15 @@
                     android:id="@+id/edtxtSearch"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="13dp"
+                    android:layout_margin="@dimen/padding4"
                     android:background="@drawable/search_edtxt_rounded"
+                    android:hint="@string/searchTextHint"
                     android:imeOptions="actionSearch"
                     android:inputType="text"
-                    android:hint="Film, Müzik veya Podcast"
                     android:lineSpacingExtra="6sp"
                     android:maxLines="1"
-                    android:padding="13dp"
-                    android:textSize="12sp" />
+                    android:padding="@dimen/padding4"
+                    android:textSize="@dimen/font1" />
 
                 <ImageButton
                     android:layout_width="match_parent"
@@ -100,6 +114,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rltSearch"
+                android:layout_margin="@dimen/padding3"
                 tools:listitem="@layout/row_song">
 
             </androidx.recyclerview.widget.RecyclerView>
