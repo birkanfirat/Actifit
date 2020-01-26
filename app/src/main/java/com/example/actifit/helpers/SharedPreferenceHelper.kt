@@ -58,4 +58,14 @@ class SharedPreferenceHelper {
         } else arrayListOf<SongModel>()
 
     }
+
+    fun searchRecentlySongModel(searchModel: SongModel): Boolean {
+        val allSongModel: ArrayList<SongModel> = getRecentlySongModel()
+
+        var resultFilter = allSongModel.filter {
+            it == searchModel
+        }
+        return !resultFilter.isEmpty()
+
+    }
 }
