@@ -5,4 +5,7 @@
     <string name="searchTextHint">Film, Müzik veya Podcast</string>
     <string name="appName">Actifit</string>
     <string name="ok">Tamam</string>
+    <string name="areYouSure">Silmek istediğinize emin misiniz?</string>
+    <string name="no">Hayır</string>
+    <string name="yes">Evet</string>
 </resources>

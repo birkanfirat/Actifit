@@ -62,10 +62,50 @@ class SharedPreferenceHelper {
     fun searchRecentlySongModel(searchModel: SongModel): Boolean {
         val allSongModel: ArrayList<SongModel> = getRecentlySongModel()
 
-        var resultFilter = allSongModel.filter {
+        val resultFilter = allSongModel.filter {
             it == searchModel
         }
         return !resultFilter.isEmpty()
+    }
 
+    fun setDeleteSongModel(deleteSongModel: SongModel) {
+        val deleteAllSongModel: ArrayList<SongModel> = getDeleteSongModel()
+
+        var resultFilter = deleteAllSongModel.filter {
+            it == deleteSongModel
+        }
+        if (resultFilter.isEmpty()) {
+            deleteAllSongModel.add(deleteSongModel)
+        }
+
+        val gson = Gson()
+        val json = gson.toJson(deleteAllSongModel)
+        put("DELETE_LIST", json)
+    }
+
+    private fun getDeleteSongModel(): ArrayList<SongModel> {
+        val json: String = getString("DELETE_LIST")
+        return if (json != null && json != "") {
+            try {
+                val gson = Gson()
+                val type: Type =
+                    object : TypeToken<List<SongModel?>?>() {}.type
+                val songDeleteList: List<SongModel> =
+                    gson.fromJson<List<SongModel>>(json, type)
+                songDeleteList
+            } catch (e: Exception) {
+                arrayListOf<SongModel>()
+            } as ArrayList<SongModel>
+        } else arrayListOf<SongModel>()
+
+    }
+
+    fun searchDeleteSongModel(searchModel: SongModel): Boolean {
+        val deleteAllSongModel: ArrayList<SongModel> = getDeleteSongModel()
+
+        val resultFilter = deleteAllSongModel.filter {
+            it == searchModel
+        }
+        return !resultFilter.isEmpty()
     }
 }

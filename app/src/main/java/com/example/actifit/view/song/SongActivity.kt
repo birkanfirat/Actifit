@@ -1,6 +1,7 @@
 package com.example.actifit.view.song
 
 import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
@@ -46,8 +47,16 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
                 songAdapter.notifyDataSetChanged()
             }
             if (!resultSearch.results.isNullOrEmpty()) {
+                var resultSongModel = arrayListOf<SongModel>()
+
+                resultSearch.results.forEach {
+                    if (!SharedPreferenceHelper().searchDeleteSongModel(it)) {
+                        resultSongModel.add(it)
+                    } else
+                        return@forEach
+                }
                 songAdapter.songList.clear()
-                songAdapter.songList.addAll(resultSearch.results)
+                songAdapter.songList.addAll(resultSongModel)
                 songAdapter.notifyDataSetChanged()
             }
 
@@ -73,7 +82,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
             onBackPressed()
         }
         imgDeleteIcon.setOnClickListener {
-
+            checkedChoose()
         }
 
         init()
@@ -149,6 +158,35 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
 
         val dialog = builder.create()
         dialog.show()
+    }
+
+    private fun checkedChoose() {
+        val builder = AlertDialog.Builder(this)
+
+        val dialogClickListener =
+            DialogInterface.OnClickListener { dialog, which ->
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
+                        deleteItem()
+                    }
+                    DialogInterface.BUTTON_NEGATIVE -> {
+                        dialog.dismiss()
+                    }
+                }
+            }
+
+        builder.setMessage(getString(R.string.areYouSure))
+            .setPositiveButton(getString(R.string.yes), dialogClickListener)
+            .setNegativeButton(getString(R.string.no), dialogClickListener).show()
+    }
+
+    fun deleteItem() {
+        songItem?.let { SharedPreferenceHelper().setDeleteSongModel(it) }
+        if (!edtxtSearch.text.isNullOrEmpty()) {
+            viewModel.callSong(edtxtSearch.text.toString(), searchType.toString())
+        }
+        onBackPressed()
+
     }
 
     override fun onConfigurationChanged(newConfig: Configuration) {
