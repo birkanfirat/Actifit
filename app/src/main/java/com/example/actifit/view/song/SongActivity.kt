@@ -13,6 +13,7 @@ import com.example.actifit.base.BaseActivity
 import com.example.actifit.data.local.songItem
 import com.example.actifit.data.remote.model.SongModel
 import com.example.actifit.helpers.Router
+import com.example.actifit.helpers.SharedPreferenceHelper
 import com.example.actifit.helpers.enums.SearchTypeEnum
 import com.example.actifit.helpers.listener.SelectListener
 import com.example.actifit.view.song.adapter.SongsAdapter
@@ -25,6 +26,8 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
     lateinit var layoutManager: GridLayoutManager
     private lateinit var viewModel: SongsActivityViewModel
     var searchType: String? = ""
+    var selected: Int = 3
+    var selectedTitle: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -79,6 +82,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
     override fun onItemClicked(item: SongModel) {
         songItem = item
         hideSoftKeyboard(edtxtSearch)
+        SharedPreferenceHelper().setRecentlySongModel(item)
         Router().addFragment(this, SongDetailFragment())
     }
 
@@ -103,38 +107,46 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
         )
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.selectCategory))
-        builder.setItems(arrayType) { _, which ->
+        builder.setSingleChoiceItems(arrayType, selected) { dialog, which ->
             try {
-
                 when (which) {
                     0 -> {
                         searchType = SearchTypeEnum.musicVideo.toString()
-                        tvTitle.text = SearchTypeEnum.musicVideo.value
+                        selectedTitle = SearchTypeEnum.musicVideo.value
                     }
 
                     1 -> {
                         searchType = SearchTypeEnum.podcast.toString()
-                        tvTitle.text = SearchTypeEnum.podcast.value
+                        selectedTitle = SearchTypeEnum.podcast.value
                     }
 
                     2 -> {
                         searchType = SearchTypeEnum.movie.toString()
-                        tvTitle.text = SearchTypeEnum.movie.value
+                        selectedTitle = SearchTypeEnum.movie.value
                     }
 
                     3 -> {
                         searchType = ""
-                        tvTitle.text = getString(R.string.appName)
+                        selectedTitle = getString(R.string.appName)
                     }
                 }
-                if (!edtxtSearch.text.isNullOrEmpty()) {
-                    viewModel.callSong(edtxtSearch.text.toString(), searchType.toString())
-                }
+
+                selected = which
 
             } catch (e: IllegalArgumentException) {
 
             }
         }
+        builder.setPositiveButton(
+            getString(R.string.ok)
+        ) { dialog, which ->
+
+            if (!edtxtSearch.text.isNullOrEmpty()) {
+                viewModel.callSong(edtxtSearch.text.toString(), searchType.toString())
+            }
+            tvTitle.text = selectedTitle
+        }
+
         val dialog = builder.create()
         dialog.show()
     }
