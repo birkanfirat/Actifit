@@ -5,7 +5,6 @@ import android.content.Intent
 import android.net.Uri
 import androidx.lifecycle.ViewModelProviders
 import android.os.Bundle
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,6 +13,7 @@ import com.bumptech.glide.Glide
 import com.example.actifit.R
 import com.example.actifit.base.BaseFragment
 import com.example.actifit.data.local.songItem
+import com.example.actifit.helpers.Others
 import com.example.actifit.view.song.SongActivity
 import kotlinx.android.synthetic.main.song_activity.*
 import kotlinx.android.synthetic.main.song_detail_fragment.*
@@ -50,12 +50,13 @@ class SongDetailFragment : BaseFragment() {
             var songItem = songItem!!
             var pictureUrl = songItem.artworkUrl100.replace("100x100bb.jpg", "280x420.jpg")
             Glide.with(this).load(pictureUrl).centerCrop()
+                .placeholder(Others().getCircularProgressDrawable(requireContext()))
                 .into(imgSong)
             txtSongName.text = songItem.trackName
             artistName.text = songItem.artistName
             collectionName.text = songItem.collectionName
             genreName.text = songItem.primaryGenreName
-            releaseDate.text = songItem.releaseDate
+            releaseDate.text = Others().convertDateMonthlyName(songItem.releaseDate)
             country.text = songItem.country
             price.text = songItem.trackPrice.toString() + " " + songItem.currency
             video.text = songItem.trackViewUrl

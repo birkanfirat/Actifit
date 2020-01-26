@@ -6,6 +6,8 @@ import android.content.res.Configuration
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.GridLayoutManager
@@ -23,11 +25,15 @@ import kotlinx.android.synthetic.main.song_activity.*
 
 class SongActivity : BaseActivity(), SelectListener<SongModel> {
 
+    var lastClickTime = System.currentTimeMillis()
+    var CLICK_TIME_INTERVAL = 300
+
     lateinit var songAdapter: SongsAdapter
     lateinit var layoutManager: GridLayoutManager
     private lateinit var viewModel: SongsActivityViewModel
     var searchType: String? = ""
-    var selected: Int = 3
+    //Default tür tümü seçili olması isteniyor.
+    var selectedType: Int = 3
     var selectedTitle: String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,15 +44,23 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
             this, SongActivityViewModelFactory()
         ).get(SongsActivityViewModel::class.java)
 
+        //Response observe
         viewModel.resultSearch.observe(this, Observer {
 
             val resultSearch = it ?: return@Observer
 
             if (resultSearch != null || resultSearch.results.isNullOrEmpty()) {
+                // Adapteri temizledik Boş yazısı gösterildi.
                 songAdapter.songList.clear()
                 songAdapter.notifyDataSetChanged()
+                rcylrAllResult.visibility = View.GONE
+                txtNoResult.visibility = View.VISIBLE
             }
             if (!resultSearch.results.isNullOrEmpty()) {
+
+                rcylrAllResult.visibility = View.VISIBLE
+                txtNoResult.visibility = View.GONE
+
                 var resultSongModel = arrayListOf<SongModel>()
 
                 resultSearch.results.forEach {
@@ -62,8 +76,31 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
 
         })
 
+        // Error observe
+        viewModel.resultErrorSearch.observe(this, Observer {
+
+            val resultSearch = it ?: return@Observer
+
+            if (!resultSearch.isNullOrEmpty()) {
+                Toast.makeText(this, resultSearch.toString(), Toast.LENGTH_LONG).show()
+                songAdapter.songList.clear()
+                songAdapter.notifyDataSetChanged()
+                rcylrAllResult.visibility = View.GONE
+                txtNoResult.visibility = View.VISIBLE
+            }
+
+        })
+
+        //Edittext Dinleniyor Service call
         edtxtSearch.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
+                // Performans için klavyedeki tıklanma olayını handle ediyoruz.
+                val now = System.currentTimeMillis()
+                if (now - lastClickTime < CLICK_TIME_INTERVAL) {
+                    return
+                }
+                lastClickTime = now
+
                 viewModel.callSong(s.toString(), searchType.toString())
             }
 
@@ -75,12 +112,15 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
             }
         })
 
+        // Tür Seçimi
         imgSelectType.setOnClickListener {
             showSelectType()
         }
+        //Back Button Tıklandığında
         imgBack.setOnClickListener {
             onBackPressed()
         }
+        // Detayda delete iconu
         imgDeleteIcon.setOnClickListener {
             checkedChoose()
         }
@@ -88,14 +128,16 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
         init()
     }
 
+    //Adapterda item listener'ı dinliyoruz.
     override fun onItemClicked(item: SongModel) {
         songItem = item
         hideSoftKeyboard(edtxtSearch)
-        SharedPreferenceHelper().setRecentlySongModel(item)
         Router().addFragment(this, SongDetailFragment())
+        SharedPreferenceHelper().setRecentlySongModel(item)
     }
 
     fun init() {
+        //RecylerView ve adapter initialize edildi.
         layoutManager = GridLayoutManager(this, 1)
         songAdapter =
             SongsAdapter(
@@ -103,10 +145,11 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
                 arrayListOf(),
                 this
             )
-        rcylrAllSongResult.adapter = songAdapter
-        rcylrAllSongResult.layoutManager = layoutManager
+        rcylrAllResult.adapter = songAdapter
+        rcylrAllResult.layoutManager = layoutManager
     }
 
+    // Tür Seçimi
     private fun showSelectType() {
         val arrayType = arrayOf(
             SearchTypeEnum.musicVideo.value,
@@ -116,7 +159,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
         )
         val builder = AlertDialog.Builder(this)
         builder.setTitle(getString(R.string.selectCategory))
-        builder.setSingleChoiceItems(arrayType, selected) { dialog, which ->
+        builder.setSingleChoiceItems(arrayType, selectedType) { dialog, which ->
             try {
                 when (which) {
                     0 -> {
@@ -140,7 +183,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
                     }
                 }
 
-                selected = which
+                selectedType = which
 
             } catch (e: IllegalArgumentException) {
 
@@ -160,6 +203,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
         dialog.show()
     }
 
+    //Delete Dialogu
     private fun checkedChoose() {
         val builder = AlertDialog.Builder(this)
 
@@ -180,6 +224,7 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
             .setNegativeButton(getString(R.string.no), dialogClickListener).show()
     }
 
+    //Shared Pref'e silinen itemı kaydediyoruz.
     fun deleteItem() {
         songItem?.let { SharedPreferenceHelper().setDeleteSongModel(it) }
         if (!edtxtSearch.text.isNullOrEmpty()) {
@@ -189,16 +234,19 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
 
     }
 
+    //Telefon yan çevirildiğinde tetikleniyor.
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
+        //LANDSCAPE durumunda listede 2 item görünmesi isteniyor.
         if (newConfig.orientation == Configuration.ORIENTATION_LANDSCAPE) {
             layoutManager = GridLayoutManager(this, 2)
-            rcylrAllSongResult.layoutManager = layoutManager
+            rcylrAllResult.layoutManager = layoutManager
 
-
-        } else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
+        }
+        //PORTRAIT durumunda listede 1 item görünmesi isteniyor.
+        else if (newConfig.orientation == Configuration.ORIENTATION_PORTRAIT) {
             layoutManager = GridLayoutManager(this, 1)
-            rcylrAllSongResult.layoutManager = layoutManager
+            rcylrAllResult.layoutManager = layoutManager
         }
     }
 

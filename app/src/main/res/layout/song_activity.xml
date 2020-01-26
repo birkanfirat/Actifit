@@ -26,8 +26,8 @@
             android:adjustViewBounds="true"
             android:padding="@dimen/padding12"
             android:scaleType="center"
-            android:visibility="invisible"
-            android:src="@drawable/icn_back" />
+            android:src="@drawable/icn_back"
+            android:visibility="invisible" />
 
         <TextView
             android:id="@+id/tvTitle"
@@ -58,14 +58,14 @@
             android:id="@+id/imgDeleteIcon"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_toLeftOf="@+id/imgSelectType"
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/imgSelectType"
             android:adjustViewBounds="true"
             android:padding="@dimen/padding12"
             android:scaleType="center"
-            android:visibility="gone"
-            android:src="@drawable/icn_delete" />
+            android:src="@drawable/icn_delete"
+            android:visibility="gone" />
     </RelativeLayout>
 
     <FrameLayout
@@ -110,14 +110,28 @@
             </RelativeLayout>
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rcylrAllSongResult"
+                android:id="@+id/rcylrAllResult"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/rltSearch"
                 android:layout_margin="@dimen/padding3"
+                android:visibility="gone"
                 tools:listitem="@layout/row_song">
 
             </androidx.recyclerview.widget.RecyclerView>
+
+            <TextView
+                android:id="@+id/txtNoResult"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="center"
+
+                android:text="Arama çubuğundan arama yapabilirsiniz..."
+                android:textColor="@color/white"
+                android:textSize="@dimen/font2"
+                android:visibility="visible">
+
+            </TextView>
         </RelativeLayout>
 
     </FrameLayout>

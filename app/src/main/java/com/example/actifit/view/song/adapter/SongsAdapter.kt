@@ -10,6 +10,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.actifit.R
 import com.example.actifit.data.remote.model.SongModel
+import com.example.actifit.helpers.Others
 import com.example.actifit.helpers.SharedPreferenceHelper
 import com.example.actifit.helpers.listener.SelectListener
 import kotlinx.android.synthetic.main.row_song.view.*
@@ -39,6 +40,8 @@ class SongsAdapter(
 
         val itemRow = songList[position]
         if (itemRow != null) {
+
+            //Eğer daha önceden ziyaret edildi ise renk ve türünü değiştirdik.
             if (SharedPreferenceHelper().searchRecentlySongModel(itemRow)) {
                 holder.itemView.tvSongName.setTextColor(ContextCompat.getColor(context, R.color.colorYellow))
                 holder.itemView.tvSongName.setTypeface(null, Typeface.BOLD_ITALIC)
@@ -47,10 +50,12 @@ class SongsAdapter(
             else{
                 holder.itemView.tvSongName.setTextColor(ContextCompat.getColor(context, R.color.white))
                 holder.itemView.tvSongName.setTypeface(null, Typeface.NORMAL)
-
             }
+
             Glide.with(context).load(itemRow.artworkUrl100).centerCrop()
+                .placeholder(Others().getCircularProgressDrawable(context))
                 .into(holder.itemView.imgSong)
+
             holder.itemView.tvSongName.text = itemRow.trackName
 
             holder.itemView.setOnClickListener {

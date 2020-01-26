@@ -17,6 +17,8 @@ class SongsActivityViewModel(activity: Activity) : ViewModel() {
     var activity = activity
     var _resultSearch = MutableLiveData<ResultModel>()
     var resultSearch: LiveData<ResultModel> = _resultSearch
+    var _resultErrorSearch = MutableLiveData<String>()
+    var resultErrorSearch: LiveData<String> = _resultErrorSearch
 
     fun callSong(searchText: String, searchType: String) {
 
@@ -27,11 +29,7 @@ class SongsActivityViewModel(activity: Activity) : ViewModel() {
         getSong.enqueue(object : Callback<ResultModel> {
 
             override fun onFailure(call: Call<ResultModel>, t: Throwable) {
-                Log.d("", t.message)
-                Toast.makeText(
-                    activity,
-                    "", Toast.LENGTH_LONG
-                ).show()
+               _resultErrorSearch.value =t.message.toString()
 
             }
 
@@ -42,7 +40,7 @@ class SongsActivityViewModel(activity: Activity) : ViewModel() {
                     if (response.isSuccessful) {
                         _resultSearch.value = response.body()
                     } else {
-
+                        _resultErrorSearch.value =response.message()
                     }
 
 
