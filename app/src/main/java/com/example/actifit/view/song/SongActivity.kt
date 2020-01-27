@@ -147,6 +147,8 @@ class SongActivity : BaseActivity(), SelectListener<SongModel> {
             )
         rcylrAllResult.adapter = songAdapter
         rcylrAllResult.layoutManager = layoutManager
+        selectedTitle= getString(R.string.appName)
+
     }
 
     // Tür Seçimi
